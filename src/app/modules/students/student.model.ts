@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose'
 import {
-  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
@@ -75,7 +74,7 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
   },
 })
 
-const studentSchema = new Schema<TStudent, StudentModel>(
+const studentSchema = new Schema<TStudent>(
   {
     id: {
       type: String,
@@ -179,4 +178,4 @@ studentSchema.statics.isUserExists = async function (id: string) {
   return existingUser
 }
 
-export const Student = model<TStudent, StudentModel>('Student', studentSchema)
+export const Student = model<TStudent>('Student', studentSchema)

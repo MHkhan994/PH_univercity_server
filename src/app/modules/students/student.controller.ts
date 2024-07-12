@@ -1,7 +1,11 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { studentServices } from './student.service'
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const result = await studentServices.getAllStudentsFromDB()
 
@@ -11,11 +15,15 @@ const getAllStudents = async (req: Request, res: Response) => {
       students: result,
     })
   } catch (err) {
-    console.log(err)
+    next(err)
   }
 }
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const id = req.params.id
   try {
     const result = await studentServices.getSingleStudentFromDB(id)
@@ -25,19 +33,26 @@ const getSingleStudent = async (req: Request, res: Response) => {
       students: result,
     })
   } catch (err) {
-    console.log(err)
+    next(err)
   }
 }
 
-const deleteStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { id } = req.params
-  const result = await studentServices.deleteStudentFromDB(id)
-
-  res.status(200).json({
-    status: 'success',
-    message: 'got single student',
-    students: result,
-  })
+  try {
+    const result = await studentServices.deleteStudentFromDB(id)
+    res.status(200).json({
+      status: 'success',
+      message: 'got single student',
+      students: result,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const studentControllers = {

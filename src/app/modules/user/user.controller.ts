@@ -1,8 +1,12 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 // import { studentValidations } from '../students/student.validation.zod'
 import { userServices } from './user.service'
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { password, student: studentData } = req.body
 
   try {
@@ -16,12 +20,7 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     })
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'something went wrong',
-      error: err,
-    })
-    console.log(err)
+    next(err)
   }
 }
 
