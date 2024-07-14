@@ -21,8 +21,6 @@ const createStudentToDb = async (password: string, studentData: TStudent) => {
     studentData.id = newUser.id
     studentData.user = newUser._id
 
-    console.log(studentData)
-
     const newStudent = await Student.create(studentData)
     return newStudent
   }
