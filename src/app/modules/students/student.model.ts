@@ -55,24 +55,27 @@ const guardianSchema = new Schema<TGuardian>({
   },
 })
 
-const localGuradianSchema = new Schema<TLocalGuardian>({
-  name: {
-    type: String,
-    required: [true, 'Name is required'],
+const localGuradianSchema = new Schema<TLocalGuardian>(
+  {
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+    },
+    occupation: {
+      type: String,
+      required: [true, 'Occupation is required'],
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact number is required'],
+    },
+    address: {
+      type: String,
+      required: [true, 'Address is required'],
+    },
   },
-  occupation: {
-    type: String,
-    required: [true, 'Occupation is required'],
-  },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required'],
-  },
-  address: {
-    type: String,
-    required: [true, 'Address is required'],
-  },
-})
+  { id: false },
+)
 
 const studentSchema = new Schema<TStudent>(
   {
@@ -81,6 +84,11 @@ const studentSchema = new Schema<TStudent>(
       required: [true, 'User id is required'],
       unique: true,
       ref: 'Users',
+    },
+    id: {
+      type: String,
+      required: [true, 'id is required'],
+      unique: true,
     },
     name: {
       type: userNameSchema,
@@ -132,14 +140,6 @@ const studentSchema = new Schema<TStudent>(
     admissionSemester: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicSemester',
-    },
-    academicDepartment: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicDepartment',
-    },
-    academicFaculty: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicFaculty',
     },
   },
   {
