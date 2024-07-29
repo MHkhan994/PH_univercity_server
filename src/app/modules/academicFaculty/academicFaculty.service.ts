@@ -20,7 +20,7 @@ const updateAcademicFacultyIntoDB = async (
   id: string,
   payload: TAcademicFaculty,
 ) => {
-  if (payload.name) {
+  if (!payload.name) {
     throw new Error('Invalid Faculty Name')
   }
 
