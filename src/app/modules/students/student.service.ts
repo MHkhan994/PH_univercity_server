@@ -7,7 +7,7 @@ const getAllStudentsFromDB = async () => {
 }
 
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ id: id })
+  const result = await Student.findOne({ id: id }).populate('admissionSemester')
   return result
 }
 
