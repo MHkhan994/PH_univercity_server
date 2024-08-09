@@ -1,5 +1,7 @@
 import { model, Schema } from 'mongoose'
 import { TAcademicDepartment } from './academicDepartment.interface'
+import httpStatus from 'http-status'
+import AppError from '../../errors/AppError'
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
@@ -28,7 +30,7 @@ academicDepartmentSchema.pre('save', async function (next) {
   })
 
   if (departmentExist) {
-    throw new Error('Department already exists')
+    throw new AppError(httpStatus.CONFLICT, 'Department already exists')
   }
 
   next()
@@ -40,7 +42,7 @@ academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
   const departmentExist = await AcademicDepartment.findOne({ _id: query._id })
 
   if (!departmentExist) {
-    throw new Error('Department does not exists')
+    throw new AppError(httpStatus.NOT_FOUND, 'Department does not exists')
   }
 
   next()

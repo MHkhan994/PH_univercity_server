@@ -2,10 +2,12 @@ import { ObjectId } from 'mongodb'
 import { TAcademicSemester } from './semester.interface'
 import { AcademicSemister } from './semester.model'
 import { academicSemesterNameCodeMapper } from './semester.variables'
+import AppError from '../../errors/AppError'
+import httpStatus from 'http-status'
 
 const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   if (academicSemesterNameCodeMapper[payload.name] !== payload.code) {
-    throw new Error('Invalid Semester Code')
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Semester Code')
   }
 
   const result = await AcademicSemister.create(payload)
@@ -31,7 +33,7 @@ const updateAcademicSemesterIntoDB = async (
     payload.code &&
     academicSemesterNameCodeMapper[payload.name] !== payload.code
   ) {
-    throw new Error('Invalid Semester Code')
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Semester Code')
   }
 
   const result = await AcademicSemister.findOneAndUpdate({ _id: id }, payload, {

@@ -1,3 +1,5 @@
+import httpStatus from 'http-status'
+import AppError from '../../errors/AppError'
 import { TAcademicFaculty } from './academicFaculty.interface'
 import { AcademicFaculty } from './academicFaculty.model'
 
@@ -21,7 +23,7 @@ const updateAcademicFacultyIntoDB = async (
   payload: TAcademicFaculty,
 ) => {
   if (!payload.name) {
-    throw new Error('Invalid Faculty Name')
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Faculty Name')
   }
 
   const result = await AcademicFaculty.findOneAndUpdate({ _id: id }, payload, {
