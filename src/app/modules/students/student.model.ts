@@ -5,6 +5,8 @@ import {
   TStudent,
   TUserName,
 } from './student.interface'
+import httpStatus from 'http-status'
+import AppError from '../../errors/AppError'
 // import bcrypt from 'bcrypt'
 
 const userNameSchema = new Schema<TUserName>({
@@ -145,6 +147,10 @@ const studentSchema = new Schema<TStudent>(
       type: Schema.Types.ObjectId,
       ref: 'AcademicDepartment',
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: {
@@ -160,13 +166,31 @@ studentSchema.virtual('fullName').get(function () {
 })
 
 // Query Middleware
-studentSchema.pre('save', () => {
-  console.log('this will run before save data')
+
+studentSchema.pre('save', async function (next) {
+  const user = this
+  const exist = await Student.findOne({ id: user.id })
+
+  if (exist) {
+    throw new AppError(httpStatus.CONFLICT, 'Student already exist')
+  }
+
+  next()
 })
 
-studentSchema.post('save', () => {
-  console.log('this will run before save data')
-})
+// studentSchema.pre('findOneAndUpdate', async function (next) {
+//   const id = this.getQuery()
+
+//   const exist = await Student.findOne({ id })
+
+//   console.log(exist)
+
+//   if (!exist) {
+//     throw new AppError(httpStatus.CONFLICT, 'student not found')
+//   }
+
+//   next()
+// })
 
 //creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {

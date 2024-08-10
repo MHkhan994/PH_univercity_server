@@ -2,6 +2,8 @@ import { model, Schema } from 'mongoose'
 import { TUser } from './user.interface'
 import bcrypt from 'bcrypt'
 import config from '../../config'
+import AppError from '../../errors/AppError'
+import httpStatus from 'http-status'
 
 const userSchema = new Schema<TUser>(
   {
@@ -43,6 +45,17 @@ userSchema.pre('save', async function (next) {
     user.password,
     Number(config.bcrypt_salt_rounds),
   )
+  next()
+})
+
+userSchema.pre('save', async function (next) {
+  const user = this
+  const exist = await User.findOne({ id: user.id })
+
+  if (exist) {
+    throw new AppError(httpStatus.CONFLICT, 'User already exist')
+  }
+
   next()
 })
 

@@ -28,7 +28,7 @@ const createLocalGuardianValidationSchema = z.object({
   address: z.string(),
 })
 
-export const createStudentValidationSchema = z.object({
+const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20).optional(),
     student: z.object({
@@ -50,7 +50,35 @@ export const createStudentValidationSchema = z.object({
   }),
 })
 
+const updateStudentValidationSchema = z.object({
+  body: z
+    .object({
+      password: z.string().max(20).optional(),
+      student: z
+        .object({
+          name: createUserNameValidationSchema.partial(), // Make all fields in name optional
+          gender: z.enum(['male', 'female', 'other']).optional(),
+          dateOfBirth: z.date().optional(),
+          email: z.string().email().optional(),
+          contactNo: z.string().optional(),
+          emergencyContactNo: z.string().optional(),
+          bloogGroup: z
+            .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+            .optional(),
+          presentAddress: z.string().optional(),
+          permanentAddress: z.string().optional(),
+          guardian: createGuardianValidationSchema.partial(), // Make all fields in guardian optional
+          localGuardian: createLocalGuardianValidationSchema.partial(), // Make all fields in localGuardian optional
+          admissionSemester: z.string().optional(),
+          academicDepartment: z.string().optional(),
+          profileImg: z.string().optional(),
+        })
+        .partial(), // Make all fields in student optional
+    })
+    .partial(), // Make all fields in body optional
+})
+
 export const studentValidations = {
   createStudentValidationSchema,
-  // updateStudentValidationSchema,
+  updateStudentValidationSchema,
 }
