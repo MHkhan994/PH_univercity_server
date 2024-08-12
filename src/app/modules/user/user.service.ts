@@ -50,7 +50,6 @@ const createStudentToDb = async (password: string, studentData: TStudent) => {
   } catch (err) {
     await session.abortTransaction()
     await session.endSession()
-    console.log(err)
     throw new AppError(httpStatus.CONFLICT, 'User already exist')
     // return err
   }

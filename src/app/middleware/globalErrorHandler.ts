@@ -8,6 +8,8 @@ import config from '../config'
 import handleZodError from '../errors/handleZodError'
 import handleValidationError from '../errors/handleValidationError'
 import handleCastError from '../errors/handleCastError'
+import handleDuplicateError from '../errors/handleDuplicateError'
+import AppError from '../errors/AppError'
 
 
 
@@ -18,8 +20,8 @@ const globalErrorHandler: ErrorRequestHandler = (
   res,
   next,
 ) => {
-  let statusCode = error.statusCode || 500
-  let message = error.message || 'Something went wrong'
+  let statusCode: number | string =  500
+  let message =  'Something went wrong'
 
   let errorSources: TErrorSources = [
     {
@@ -52,12 +54,39 @@ const globalErrorHandler: ErrorRequestHandler = (
     setSimplifiedErrors(simplifiedError)
   }
 
+  else if (error.code === 11000) {
+    const simplifiedError = handleDuplicateError(error)
+    setSimplifiedErrors(simplifiedError)
+  }
+
+  else if (error instanceof AppError) {
+    statusCode = error?.statusCode
+    message = error?.message
+    errorSources = [
+      {
+        path: "",
+        message: error?.message
+      }
+    ]
+  }
+
+  else if (error instanceof Error) {
+     message = error?.message
+    errorSources = [
+      {
+        path: "",
+        message: error?.message
+      }
+    ]
+  }
+
 
   return res.status(statusCode).json({
     success: false,
     message,
     errorSources,
-    stack: config.node_env === 'development' ? error?.stack : null
+    stack: config.node_env === 'development' ? error?.stack : null,
+    // error
   })
 }
 
