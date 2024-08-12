@@ -178,19 +178,17 @@ studentSchema.pre('save', async function (next) {
   next()
 })
 
-// studentSchema.pre('findOneAndUpdate', async function (next) {
-//   const id = this.getQuery()
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const { id } = this.getQuery()
 
-//   const exist = await Student.findOne({ id })
+  const exist = await Student.findOne({ id })
 
-//   console.log(exist)
+  if (!exist) {
+    throw new AppError(httpStatus.CONFLICT, 'student not found')
+  }
 
-//   if (!exist) {
-//     throw new AppError(httpStatus.CONFLICT, 'student not found')
-//   }
-
-//   next()
-// })
+  next()
+})
 
 //creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {

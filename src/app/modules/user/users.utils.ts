@@ -2,19 +2,13 @@ import { TAcademicSemester } from '../academicSemester/semester.interface'
 import { User } from './user.model'
 
 export const findLastStudentId = async () => {
-  const lastStudent = await User.findOne(
-    {
-      role: 'student',
-    },
-    {
-      id: 1,
-      _id: 0,
-    },
-  )
+  const lastStudent = await User.findOne({
+    role: 'student',
+  })
     .sort({ createdAt: -1 })
     .lean()
 
-  return lastStudent?.id ? lastStudent.id.substring(6) : undefined
+  return lastStudent?.id ? lastStudent.id : undefined
 }
 
 export const generateStudentId = async (payload: TAcademicSemester | null) => {
@@ -22,6 +16,7 @@ export const generateStudentId = async (payload: TAcademicSemester | null) => {
   let currentId = (0).toString()
 
   const lastStudentId = await findLastStudentId()
+
   const lastStudentSemesterCode = lastStudentId?.substring(4, 6)
   const lastStudentYear = lastStudentId?.substring(0, 4)
   const currentSemesterCode = payload?.code
