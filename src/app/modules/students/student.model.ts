@@ -179,12 +179,20 @@ studentSchema.pre('save', async function (next) {
 })
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
-  const { id } = this.getQuery()
+  const id  = this.getQuery()
 
   const exist = await Student.findOne({ id })
 
   if (!exist) {
     throw new AppError(httpStatus.CONFLICT, 'student not found')
+  }
+
+  next()
+})
+
+studentSchema.post('findOne', async function (doc, next) {
+  if (doc === null) {
+    throw new AppError(httpStatus.NOT_FOUND, "Student not found")
   }
 
   next()

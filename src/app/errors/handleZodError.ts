@@ -1,21 +1,20 @@
 import { ZodError, ZodIssue } from "zod"
-import config from "../config"
+import { TErrorSources, TGenericErrorResponse } from "../interface/error.interface"
 
-    const handleZodError = (err: ZodError) => {
-      const statusCode = 400
-      
-      const errorSources = err.issues.map((issue: ZodIssue) => {
-        return {
-          path: issue?.path[issue.path.length - 1],
-          message: issue?.message
-        }
-      })
-
+    const handleZodError = (err: ZodError):TGenericErrorResponse => {
+        
+        const errorSources:TErrorSources = err.issues.map((issue: ZodIssue) => {
+            return {
+                path: issue?.path[issue.path.length - 1],
+                message: issue?.message
+            }
+        })
+        
+        const statusCode = 400
       return {
         statusCode,
         message: 'Data Validation Error',
-        errorSources,
-        stack: config.node_env === 'development' ? err?.stack : null
+        errorSources
     }
 }
   

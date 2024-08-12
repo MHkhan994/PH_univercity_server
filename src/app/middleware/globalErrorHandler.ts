@@ -3,9 +3,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ErrorRequestHandler } from 'express'
 import { ZodError, ZodIssue } from 'zod'
-import { TErrorSources } from '../interface/error.interface'
+import { TErrorSources, TGenericErrorResponse } from '../interface/error.interface'
 import config from '../config'
 import handleZodError from '../errors/handleZodError'
+import handleValidationError from '../errors/handleValidationError'
+import handleCastError from '../errors/handleCastError'
 
 
 
@@ -26,21 +28,36 @@ const globalErrorHandler: ErrorRequestHandler = (
     }
   ]
 
-
-  if (error instanceof ZodError) {
-    const simplifiedError = handleZodError(error)
-
+  const setSimplifiedErrors = (simplifiedError:TGenericErrorResponse) => {
     statusCode = simplifiedError?.statusCode
     message = simplifiedError?.message
     errorSources = simplifiedError?.errorSources
   }
 
 
+  if (error instanceof ZodError) {
+    const simplifiedError = handleZodError(error)
+
+    setSimplifiedErrors(simplifiedError)
+  }
+
+  else if (error.name === "ValidationError") {
+    const simplifiedError = handleValidationError(error)
+    setSimplifiedErrors(simplifiedError)
+  }
+
+  else if (error.name === "CastError") {
+    const simplifiedError = handleCastError(error)
+    
+    setSimplifiedErrors(simplifiedError)
+  }
+
 
   return res.status(statusCode).json({
     success: false,
     message,
     errorSources,
+    stack: config.node_env === 'development' ? error?.stack : null
   })
 }
 
