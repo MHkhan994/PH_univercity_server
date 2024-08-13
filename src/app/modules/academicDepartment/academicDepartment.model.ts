@@ -26,7 +26,7 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>(
 
 academicDepartmentSchema.pre('save', async function (next) {
   const departmentExist = await AcademicDepartment.findOne({
-    name: this.name,
+    name: {$regex: this.name, $options: 'i'}
   })
 
   if (departmentExist) {

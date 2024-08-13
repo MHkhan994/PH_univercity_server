@@ -17,6 +17,10 @@ app.get('/', (req: Request, res: Response) => {
   res.send('server is running')
 })
 
+app.get('/test', async (req, res) => {
+  // Promise.reject()
+})
+
 app.use(globalErrorHandler)
 
 // not found route
