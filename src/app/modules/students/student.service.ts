@@ -6,29 +6,30 @@ import httpStatus from 'http-status'
 import { User } from '../user/user.model'
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-
-  let searchTerm: string = ""
-  const queryObj = {...query}
+  let searchTerm: string = ''
+  const queryObj = { ...query }
 
   const searchableFields = ['email', 'name.firstName', 'presentAddress']
-  
+
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string
   }
 
-  const searchQuery = Student.find(
-    {
-      $or: searchableFields.map((field => (
-        {
-          [field]: {$regex: searchTerm, $options: "i"}
-        }
-      )))
-    }
-  )
+  const searchQuery = Student.find({
+    $or: searchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  })
 
-  const excludeFields: string[] = ['searchTerm','sort', 'limit']
+  const excludeFields: string[] = [
+    'searchTerm',
+    'sort',
+    'limit',
+    'page',
+    'fields',
+  ]
 
-  excludeFields.forEach(el => delete queryObj[el])
+  excludeFields.forEach((el) => delete queryObj[el])
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -39,25 +40,41 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
         path: 'academicFaculty',
       },
     })
-  
+
   let sort = 'createdAt'
 
   if (query.sort) {
     sort = query.sort as string
   }
 
-
   const sortQuery = filterQuery.sort(sort)
-  
+
+  let page = 1
+  let skip = 0
   let limit = 1
+  let fields = '-_v'
 
   if (query.limit) {
     limit = Number(query.limit) as number
   }
 
-  const limitQuery = await sortQuery.limit(limit)
+  if (query.page) {
+    page = Number(query.page)
+    skip = Number(page - 1) * limit
+  }
 
-  return limitQuery
+  const paginateQuery = sortQuery.skip(skip)
+
+  const limitQuery = paginateQuery.limit(limit)
+
+  // field limiting
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ')
+  }
+
+  const fieldQuery = await limitQuery.select(fields)
+
+  return fieldQuery
 }
 
 const getSingleStudentFromDB = async (id: string) => {
