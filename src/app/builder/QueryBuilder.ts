@@ -39,5 +39,39 @@ class QueryBuilder<T> {
     excludeFields.forEach((el) => delete queryObj[el])
 
     this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>)
+
+    return this
+  }
+
+  // sort query
+  sort() {
+    const sort =
+      (this.query?.sort as string)?.split(',')?.join(' ') || '-createdAt'
+
+    this.queryModel = this.queryModel.sort(sort as string)
+
+    return this
+  }
+
+  // pagination
+  paginate() {
+    const page = Number(this.query?.page) || 1
+    const limit = Number(this.query.limit) || 10
+    const skip = (page - 1) * limit
+
+    this.queryModel = this.queryModel.skip(skip)
+
+    return this
+  }
+
+  // feild filtering
+  fields() {
+    const fields =
+      (this.query?.fields as string)?.split(',')?.join(' ') || '-_v'
+    this.queryModel = this.queryModel.select(fields)
+
+    return this
   }
 }
+
+export default QueryBuilder
