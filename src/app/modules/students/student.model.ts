@@ -9,7 +9,7 @@ import httpStatus from 'http-status'
 import AppError from '../../errors/AppError'
 // import bcrypt from 'bcrypt'
 
-const userNameSchema = new Schema<TUserName>({
+export const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
@@ -179,7 +179,7 @@ studentSchema.pre('save', async function (next) {
 })
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
-  const id  = this.getQuery()
+  const id = this.getQuery()
 
   const exist = await Student.findOne({ id })
 
@@ -192,7 +192,7 @@ studentSchema.pre('findOneAndUpdate', async function (next) {
 
 studentSchema.post('findOne', async function (doc, next) {
   if (doc === null) {
-    throw new AppError(httpStatus.NOT_FOUND, "Student not found")
+    throw new AppError(httpStatus.NOT_FOUND, 'Student not found')
   }
 
   next()

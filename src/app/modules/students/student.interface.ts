@@ -6,6 +6,8 @@ export type TUserName = {
   lastName: string
 }
 
+export type TGender = 'male' | 'female' | 'other'
+
 export type TGuardian = {
   fatherName: string
   fatherOccupation: string
@@ -22,16 +24,26 @@ export type TLocalGuardian = {
   address: string
 }
 
+export type TBloodGroup =
+  | 'A+'
+  | 'A-'
+  | 'B+'
+  | 'B-'
+  | 'AB+'
+  | 'AB-'
+  | 'O+'
+  | 'O-'
+
 export type TStudent = {
   id: string
   user: Types.ObjectId
   name: TUserName
-  gender: 'male' | 'female' | 'other'
+  gender: TGender
   dateOfBirth?: Date
   email: string
   contactNo: string
   emergencyContactNo: string
-  bloogGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
+  bloogGroup?: TBloodGroup
   presentAddress: string
   permanentAddress: string
   guardian: TGuardian
