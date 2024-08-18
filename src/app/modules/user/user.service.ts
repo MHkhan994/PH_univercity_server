@@ -60,6 +60,12 @@ const createStudentToDb = async (password: string, studentData: TStudent) => {
 const createAdminIntoDB = async (password: string, adminData: TAdmin) => {
   const user: Partial<TUser> = {}
 
+  const exists = await Admin.findOne({ email: adminData.email })
+
+  if (exists) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Admin already exists')
+  }
+
   user.password = password || (config.default_password as string)
   user.role = 'admin'
 
@@ -89,11 +95,13 @@ const createAdminIntoDB = async (password: string, adminData: TAdmin) => {
     await session.endSession()
 
     return newAdmin
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     // console.log(err)
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(httpStatus.CONFLICT, 'failed to create user')
+    throw new AppError(httpStatus.CONFLICT, 'failed to create Admin')
+    // throw new Error(err)
   }
 }
 

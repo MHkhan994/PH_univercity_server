@@ -7,6 +7,7 @@ const createAdminValidation = z.object({
     admin: z.object({
       name: createUserNameValidationSchema,
       gender: z.enum(['male', 'female', 'other']),
+      designation: z.string(),
       dateOfBirth: z.date().optional(),
       email: z.string().email(),
       contactNo: z.string(),
@@ -28,6 +29,7 @@ const updateAdminValidation = z.object({
         gender: z.enum(['male', 'female', 'other']).optional(),
         dateOfBirth: z.date().optional(),
         email: z.string().email().optional(),
+        designation: z.string(),
         contactNo: z.string().optional(),
         emergencyContactNo: z.string().optional(),
         bloodGroup: z

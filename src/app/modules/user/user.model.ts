@@ -59,17 +59,17 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
-// userSchema.pre('findOneAndUpdate', async function (next) {
-//   const id = this.getQuery()
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const id = this.getQuery()
 
-//   const user = await User.findOne({ id })
+  const user = await User.findOne({ id })
 
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'User does not exist')
-//   }
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User does not exist')
+  }
 
-//   next()
-// })
+  next()
+})
 
 userSchema.post('save', async function (user, next) {
   user.password = ''
