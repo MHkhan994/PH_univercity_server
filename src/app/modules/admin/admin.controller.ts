@@ -42,8 +42,23 @@ const deleteAdmin = catchAsync(async (req, res) => {
   })
 })
 
+const updateAdmin = catchAsync(async (req, res) => {
+  const id = req.params.id
+  const { admin } = req.body
+
+  const result = await AdminServices.updateAdminIntoDB(id, admin)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Updated admin data successfully',
+    data: result,
+  })
+})
+
 export const AdminControllers = {
   getSingleAdmin,
   getAllAdmins,
   deleteAdmin,
+  updateAdmin,
 }

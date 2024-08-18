@@ -35,7 +35,7 @@ const AdminSchema = new Schema<TAdmin>(
     },
     contactNo: { type: String },
     emergencyContactNo: { type: String },
-    bloogGroup: {
+    bloodGroup: {
       type: String,
       enum: {
         values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
@@ -51,9 +51,16 @@ const AdminSchema = new Schema<TAdmin>(
     },
   },
   {
+    toJSON: {
+      virtuals: true,
+    },
     timestamps: true,
   },
 )
+
+AdminSchema.virtual('fullName').get(function () {
+  return this.name?.firstName + this.name?.middleName + this.name?.lastName
+})
 
 const Admin = model<TAdmin>('Admin', AdminSchema)
 

@@ -15,4 +15,10 @@ router.get(
 
 router.delete('/delete/:id', AdminControllers.deleteAdmin)
 
+router.patch(
+  '/update/:id',
+  validateRequest(AdminValidations.updateAdminValidation),
+  AdminControllers.updateAdmin,
+)
+
 export const AdminRoutes = router

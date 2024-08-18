@@ -115,7 +115,7 @@ const studentSchema = new Schema<TStudent>(
       type: String,
       required: [true, 'Emergency contact number is required'],
     },
-    bloogGroup: {
+    bloodGroup: {
       type: String,
       enum: {
         values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
@@ -190,13 +190,13 @@ studentSchema.pre('findOneAndUpdate', async function (next) {
   next()
 })
 
-studentSchema.post('findOne', async function (doc, next) {
-  if (doc === null) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Student not found')
-  }
+// studentSchema.post('findOne', async function (doc, next) {
+//   if (doc === null) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Student not found')
+//   }
 
-  next()
-})
+//   next()
+// })
 
 //creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {

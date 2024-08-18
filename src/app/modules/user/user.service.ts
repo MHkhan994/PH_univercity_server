@@ -50,10 +50,10 @@ const createStudentToDb = async (password: string, studentData: TStudent) => {
 
     return newStudent
   } catch (err) {
+    // console.log(err)
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(httpStatus.CONFLICT, 'User already exist')
-    // return err
   }
 }
 
@@ -90,7 +90,7 @@ const createAdminIntoDB = async (password: string, adminData: TAdmin) => {
 
     return newAdmin
   } catch (err) {
-    console.log(err)
+    // console.log(err)
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(httpStatus.CONFLICT, 'failed to create user')

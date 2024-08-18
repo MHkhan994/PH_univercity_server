@@ -5,6 +5,7 @@ import { searchableFields } from '../students/students.constants'
 import Admin from './admin.model'
 import mongoose from 'mongoose'
 import { User } from '../user/user.model'
+import { TAdmin } from './admin.interface'
 
 const getSingleAdminFromDB = async (id: string) => {
   const result = await Admin.findById(id)
@@ -48,7 +49,7 @@ const deleteAdminFromDB = async (id: string) => {
     }
 
     const deletedUser = await User.findByIdAndUpdate(
-      admin.user,
+      deletedAdmin.user,
       {
         isDeleted: true,
       },
@@ -70,8 +71,29 @@ const deleteAdminFromDB = async (id: string) => {
   }
 }
 
+const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
+  const { name, ...restOfUpdateData } = payload
+
+  const modifiedUpdatedData: Record<string, unknown> = {
+    ...restOfUpdateData,
+  }
+
+  if (name && Object.keys(name).length !== 0) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedUpdatedData[`name.${key}`] = value
+    }
+  }
+
+  const result = await Admin.findByIdAndUpdate(id, modifiedUpdatedData, {
+    new: true,
+  })
+
+  return result
+}
+
 export const AdminServices = {
   getSingleAdminFromDB,
   getAllAdminFromDB,
   deleteAdminFromDB,
+  updateAdminIntoDB,
 }
