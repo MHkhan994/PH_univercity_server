@@ -28,6 +28,11 @@ const CourseSchema = new Schema<TCourse>({
     trim: true,
     required: true,
   },
+  credits: {
+    type: Number,
+    trim: true,
+    required: true,
+  },
   preRequisitCourses: preRequisitCoursesSchema,
 })
 
