@@ -1,7 +1,7 @@
 import { Types } from 'mongoose'
 import { TBloodGroup, TGender, TUserName } from '../students/student.interface'
 
-export interface TAdmin {
+export type TFaculty = {
   id: string
   user: Types.ObjectId
   designation: string
@@ -15,5 +15,6 @@ export interface TAdmin {
   presentAddress: string
   permanentAddress: string
   profileImg?: string
+  academicDepartment: Types.ObjectId
   isDeleted: boolean
 }

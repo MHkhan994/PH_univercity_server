@@ -1,10 +1,11 @@
-import mongoose from 'mongoose'
+import httpStatus from 'http-status'
 import QueryBuilder from '../../builder/QueryBuilder'
+import AppError from '../../errors/AppError'
 import { searchableFields } from '../students/students.constants'
 import Admin from './admin.model'
+import mongoose from 'mongoose'
 import { User } from '../user/user.model'
-import AppError from '../../errors/AppError'
-import httpStatus from 'http-status'
+import { TAdmin } from './admin.interface'
 
 const getSingleAdminFromDB = async (id: string) => {
   const result = await Admin.findById(id)
@@ -26,43 +27,74 @@ const getAllAdminFromDB = async (query: Record<string, unknown>) => {
 }
 
 const deleteAdminFromDB = async (id: string) => {
-  
+  const admin = await Admin.findById(id)
+
+  if (!admin) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin does not exist')
+  }
+
   const session = await mongoose.startSession()
 
   try {
-    
     session.startTransaction()
 
-    const deletedAdmin = await Admin.findByIdAndUpdate( id , { isDeleted: true }, { new: true, session })
+    const deletedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true, session },
+    )
 
     if (!deletedAdmin) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Admin')
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin')
     }
 
-    const deletedUser = await User.findByIdAndUpdate(deletedAdmin.user, {isDeleted: true}, {new: true, session})
+    const deletedUser = await User.findByIdAndUpdate(
+      deletedAdmin.user,
+      {
+        isDeleted: true,
+      },
+      { new: true, session },
+    )
 
     if (!deletedUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user')
     }
 
-
     await session.commitTransaction()
     await session.endSession()
 
     return deletedAdmin
-
-
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     await session.abortTransaction()
     await session.endSession()
-
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin')
+    throw new Error(err)
   }
-  
+}
+
+const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
+  const { name, ...restOfUpdateData } = payload
+
+  const modifiedUpdatedData: Record<string, unknown> = {
+    ...restOfUpdateData,
+  }
+
+  if (name && Object.keys(name).length !== 0) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedUpdatedData[`name.${key}`] = value
+    }
+  }
+
+  const result = await Admin.findByIdAndUpdate(id, modifiedUpdatedData, {
+    new: true,
+  })
+
+  return result
 }
 
 export const AdminServices = {
   getSingleAdminFromDB,
   getAllAdminFromDB,
-  deleteAdminFromDB
+  deleteAdminFromDB,
+  updateAdminIntoDB,
 }

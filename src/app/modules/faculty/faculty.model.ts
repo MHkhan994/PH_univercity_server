@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose'
-import { TAdmin } from './admin.interface'
+import { TFaculty } from './faculty.interface'
 import { userNameSchema } from '../students/student.model'
 
-const AdminSchema = new Schema<TAdmin>(
+const FacultySchema = new Schema<TFaculty>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -45,6 +45,11 @@ const AdminSchema = new Schema<TAdmin>(
     presentAddress: { type: String },
     permanentAddress: { type: String },
     profileImg: { type: String },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'AcademicDepartment',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -58,10 +63,10 @@ const AdminSchema = new Schema<TAdmin>(
   },
 )
 
-AdminSchema.virtual('fullName').get(function () {
-  return this.name?.firstName + this.name?.middleName + this.name?.lastName
+const Faculty = model<TFaculty>('Faculty', FacultySchema)
+
+FacultySchema.virtual('fullName').get(function () {
+  return this?.name?.firstName + this?.name?.middleName + this.name?.lastName
 })
 
-const Admin = model<TAdmin>('Admin', AdminSchema)
-
-export default Admin
+export default Faculty
