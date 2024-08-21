@@ -46,13 +46,27 @@ const deleteCourseIntoDB = async (id: string) => {
   return result
 }
 
-// const updateCourseIntoDB = async (id:string, payload: Partial<TCourse>) => {
+const updateCourseIntoDB = async (id:string, payload: Partial<TCourse>) => {
+  const { preRequisitCourses, ...remainingUpdateData } = payload
+  
+  // spep 1 basic course info update
 
-// }
+  const updatedBasicCourseInfo = await Course.findByIdAndUpdate(id, remainingUpdateData, { new: true, runValidators: true })
+
+  if (preRequisitCourses && preRequisitCourses.length > 0) {
+    // filter out the deleted fields
+    const deletedPreRequisits = preRequisitCourses.filter(el => el.course && el.isDeleted).map(el => el.course)
+
+    console.log(deletedPreRequisits)
+  }
+  
+  return updatedBasicCourseInfo
+}
 
 export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
   getSingleCourseFromDB,
   deleteCourseIntoDB,
+  updateCourseIntoDB
 }
