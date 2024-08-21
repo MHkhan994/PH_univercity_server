@@ -16,11 +16,23 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields()
 
-  return await courseQuery.queryModel
+  const result = await courseQuery.queryModel.populate([
+    {
+      path: 'preRequisitCourses.course',
+      select: '-_id -__v',
+    },
+  ])
+
+  return result
 }
 
 const getSingleCourseFromDB = async (id: string) => {
-  const result = await Course.findById(id)
+  const result = await Course.findById(id).populate([
+    {
+      path: 'preRequisitCourses.course',
+      select: '-_id -__v',
+    },
+  ])
   return result
 }
 

@@ -16,3 +16,5 @@ router.get('/single/:id', CourseController.getSingleCourse)
 router.get('/get-all', CourseController.getAllCourses)
 
 router.delete('/delete/:id', CourseController.deleteCourse)
+
+export const CoursesRoutes = router
