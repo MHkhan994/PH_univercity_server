@@ -52,8 +52,8 @@ const createStudentToDb = async (password: string, studentData: TStudent) => {
   } catch (err) {
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(httpStatus.CONFLICT, 'User already exist')
-    // return err
+    console.log(err)
+    throw new AppError(httpStatus.CONFLICT, 'Failed to create student')
   }
 }
 

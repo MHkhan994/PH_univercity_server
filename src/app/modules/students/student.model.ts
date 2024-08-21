@@ -190,13 +190,13 @@ studentSchema.pre('findOneAndUpdate', async function (next) {
   next()
 })
 
-studentSchema.post('findOne', async function (doc, next) {
-  if (doc === null) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Student not found')
-  }
+// studentSchema.post('findOne', async function (doc, next) {
+//   if (doc === null) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Student not found')
+//   }
 
-  next()
-})
+//   next()
+// })
 
 //creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {

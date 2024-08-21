@@ -29,7 +29,21 @@ const getAllAdmins = catchAsync(async (req, res) => {
   })
 })
 
+const deleteAdmin = catchAsync(async (req, res) => {
+  const id = req.params.id
+
+  const result = await AdminServices.deleteAdminFromDB(id)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Retrived all admins successfully',
+    data: result,
+  })
+})
+
 export const AdminControllers = {
   getSingleAdmin,
   getAllAdmins,
+  deleteAdmin
 }
