@@ -10,16 +10,8 @@ import QueryBuilder from '../../builder/QueryBuilder'
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration,
 ) => {
-  /**
-   * Step1: Check if there any registered semester that is already 'UPCOMING'|'ONGOING'
-   * Step2: Check if the semester is exist
-   * Step3: Check if the semester is already registered!
-   * Step4: Create the semester registration
-   */
+  const { academicSemester } = payload
 
-  const academicSemester = payload?.academicSemester
-
-  //check if there any registered semester that is already 'UPCOMING'|'ONGOING'
   const isThereAnyUpcomingOrOngoingSEmester =
     await SemesterRegistration.findOne({
       $or: [
@@ -34,26 +26,22 @@ const createSemesterRegistrationIntoDB = async (
       `There is aready an ${isThereAnyUpcomingOrOngoingSEmester.status} registered semester !`,
     )
   }
-  // check if the semester is exist
-  const isAcademicSemesterExists =
-    await AcademicSemister.findById(academicSemester)
 
-  if (!isAcademicSemesterExists) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      'This academic semester not found !',
-    )
+  if (academicSemester) {
+    const isAcademicSemesterExist =
+      await AcademicSemister.findById(academicSemester)
+    if (!isAcademicSemesterExist) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found')
+    }
   }
 
-  // check if the semester is already registered!
-  const isSemesterRegistrationExists = await SemesterRegistration.findOne({
-    academicSemester,
-  })
+  const doesAcadmicSemesterAlreadyRegistered =
+    await SemesterRegistration.findOne({ academicSemester })
 
-  if (isSemesterRegistrationExists) {
+  if (doesAcadmicSemesterAlreadyRegistered) {
     throw new AppError(
-      httpStatus.CONFLICT,
-      'This semester is already registered!',
+      httpStatus.BAD_REQUEST,
+      'This academic semester is already registered',
     )
   }
 
