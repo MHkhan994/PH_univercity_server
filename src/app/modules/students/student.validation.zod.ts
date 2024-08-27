@@ -45,6 +45,7 @@ const createStudentValidationSchema = z.object({
       localGuardian: createLocalGuardianValidationSchema,
       admissionSemester: z.string(),
       academicDepartment: z.string(),
+      academicFaculty: z.string(),
       profileImg: z.string().optional(),
     }),
   }),
@@ -71,6 +72,7 @@ const updateStudentValidationSchema = z.object({
           localGuardian: createLocalGuardianValidationSchema.partial(), // Make all fields in localGuardian optional
           admissionSemester: z.string().optional(),
           academicDepartment: z.string().optional(),
+          academicFaculty: z.string().optional(),
           profileImg: z.string().optional(),
         })
         .partial(), // Make all fields in student optional
